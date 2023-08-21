@@ -27,12 +27,13 @@ class AuthController extends Controller
 
         if (Auth::attempt($credenciales)) {
             $user = Auth::user();
-            $token = $user->createToken('authToken')->accessToken;
+            $scopes = [$user->rol];
+            $token = $user->createToken('authToken', $scopes);
 
             return response()->json([
                 'message' => 'Sesión iniciada correctamente',
                 'user' => $user,
-                'access_token' => $token
+                'access_token' => $token->accessToken
             ], 200);
         }
 

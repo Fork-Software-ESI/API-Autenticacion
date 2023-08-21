@@ -28,6 +28,14 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Passport::routes();
+        Passport::tokensCan([
+            'funcionario' => 'Acceso como funcionario',
+            'administrador' => 'Acceso como administrador',
+            'chofer' => 'Acceso como chofer',
+            'cliente' => 'Acceso como cliente',
+            'gerente' => 'Acceso como gerente',
+        ]);
+
         Passport::tokensExpireIn(now()->addDays(15));
         Passport::refreshTokensExpireIn(now()->addDays(30));
         Passport::personalAccessTokensExpireIn(now()->addMonths(6));
