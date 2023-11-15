@@ -3,43 +3,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-
-
+use App\Models\User;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|max:55|min:3|regex:/^\S*$/',
-            'password' => 'required|min:6',
-        ]);
+        $user = User::where('username', $request->username)->first();
 
-        if ($validator->fails()) {
+        if (!$user) {
             return response()->json([
-                'message' => 'Credenciales inválidas',
-                'errors' => $validator->errors()
-            ], 400);
-        }
-        $credenciales = $request->only('username', 'password');
-
-        if (Auth::attempt($credenciales)) {
-            $user = Auth::user();
-            $scopes = [$user->rol];
-            $token = $user->createToken('authToken', $scopes);
-
-            return response()->json([
-                'message' => 'Sesión iniciada correctamente',
-                'user' => $user,
-                'access_token' => $token->accessToken
-            ], 200);
+                'message' => 'Usuario no encontrado'
+            ], 404);
         }
 
+        if (password_verify($request->password, $user->password)) {
+            $token = $user->createToken('auth_token')->accessToken;
+            $user->token = $token;
+            auth()->login($user);
+            return response()->json([
+                'message' => 'Login exitoso',
+                'user' => $user
+            ]);
+        }
         return response()->json([
-            'message' => 'Credenciales incorrectas'
+            'message' => 'Contraseña incorrecta'
         ], 401);
+    }
 
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+        auth()->logout();
+        return response()->json([
+            'message' => 'Logout exitoso'
+        ]);
+    }
+
+    public function validarToken(Request $request)
+    {
+        return auth('api')->user();
     }
 }

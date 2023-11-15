@@ -32,7 +32,6 @@ class AuthServiceProvider extends ServiceProvider
             'funcionario' => 'Acceso como funcionario',
             'administrador' => 'Acceso como administrador',
             'chofer' => 'Acceso como chofer',
-            'cliente' => 'Acceso como cliente',
             'gerente' => 'Acceso como gerente',
         ]);
 
