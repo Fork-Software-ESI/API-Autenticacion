@@ -17,8 +17,6 @@ use App\Http\Controllers\AuthController;
 
 Route::post('/login', ([AuthController::class, 'login']))->name('auth.login');
 
-Route::middleware(['auth.api'])->group(function () {
-    Route::post('/logout', ([AuthController::class, 'logout']))->name('auth.logout');
+Route::post('/logout', ([AuthController::class, 'logout']))->name('auth.logout');
 
-    Route::get('/validarToken', ([AuthController::class, 'validarToken']))->name('auth.validarToken');
-});
+Route::get('/validarToken', ([AuthController::class, 'validarToken']))->name('auth.validarToken');
